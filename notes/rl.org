@@ -1,0 +1,24 @@
+* Reinforcement Learning
+** Classic Reinforcement Learning
+[[https://jizhi.im/blog/post/intro_q_learning][Q Learning]]
+** [[https://zhuanlan.zhihu.com/p/25239682][Deep Reinforcement Learning]]
+```
+A -> Agent action space
+S -> Environment state space
+R -> Reward
+P -> Policy, agent based on state s choose an action a, α = π(s)
+stochastic policy: Σπ(α|s) = 1
+deterministic policy: π(s): S -> A
+```
+
+\[
+e^{i\pi} = -1
+\]
+
+
+
+
+*** [[https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/4-1-A-DQN/][Deep Q Network]]
+** Paper
+** Course
+[[http://rll.berkeley.edu/deeprlcourse/][cs 294]]
