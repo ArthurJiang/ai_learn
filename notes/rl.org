@@ -10,15 +10,80 @@ P -> Policy, agent based on state s choose an action a, α = π(s)
 stochastic policy: Σπ(α|s) = 1
 deterministic policy: π(s): S -> A
 ```
-
-\[
-e^{i\pi} = -1
-\]
-
-
-
-
 *** [[https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/4-1-A-DQN/][Deep Q Network]]
 ** Paper
 ** Course
-[[http://rll.berkeley.edu/deeprlcourse/][cs 294]]
+*** [[http://rll.berkeley.edu/deeprlcourse/][cs 294]]
+
+*** [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files][ucl]]
+**** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/about_rl.png][About RL]]
+Big different from other machine learning paradigms:
+1. No supervisor, only reward signal
+2. Delayed feedback
+3. Time sequential matters
+4. Agent's actions affect the subsequent data it receives
+
+**** Reward
+Goal: select actions to maximise total future reward.
+
+**** Environment
+Agent:
+Executes action \[A_{t}\]
+Receives observation \[Q_{t}\]
+Receives scalar reward \[R_{t}\]
+
+Environment:
+Receives action \[A_{t}\]
+Emits observation \[Q_{t+1}\]
+Emits scalar reward \[R_{t+1}\]
+
+History:
+The sequence of observation, actions, rewards
+\[H_{t} = Q_{1},R_{1},A_{1},...,A_{t-1},Q_{t},R_{t}\]
+
+**** State:
+The information used to determine what happens next.
+\[S_{t} = f(H_{t})\]
+Environment state \[S^{e}_{t}\] is the environment's private representation. Environment uses to pick the next observation/reward. Which is not usually visible to the agent. Even if \[S_{t}^{e}\] is visible, it may contain irrelevant information.
+Agent state \[S^{a}_{t}\] is the agent's internal representation, agent uses it to pick next action. \[S^{a}_{t} = f(H_{t})\] 
+Information state(a.k.a [[https://zh.wikipedia.org/wiki/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE][Markov state]]), \[P[S_{t+1}|S_{t}] = P[S_{t+1}|S_{1},...,S_{t}]\]. \[S_{t}^{e}\] and \[H_{t}\] are Markov.
+
+Full observable: agent directly observes environment state \[O_{t} = S_{t}^{a} = S_{t}^{e}\], it's a Markov decision process ([[https://en.wikipedia.org/wiki/Markov_decision_process][MDP]]).
+
+Partially observable: agent indirectly observes environment state. \[S_{t}^{a} != S_{t}^,{e}\], it's partially observable Markov decision process (POMDP).
+
+**** RL Agent:
+An RL agent may include one or more of below components:
+***** Policy: agent's behaviour function.
+A map form state to action.
+Deterministic policy: \[a = \pi(s)\] 
+Stochastic policy: \[\pi(a|s) = \mathcal{P}[A_{t} = a|S_{t} = s]\]
+
+***** Value function: how good is each state and/or action
+Prediction of the future reward, used to evaluate the goodness/badness of states.
+\[v_{\pi}(s) = E_{\pi}[R_{t+1} + \gamma R_{t+2} + \gamma^{2} R_{t+3} + ... | S_{t} = s]\]
+
+***** Model: agent's representation of the environment.
+Prediction of the environment next state(P)/immediate reward(R).
+\[\mathcal{P}_{ss^{\prime}}^{a} = \mathbb{P}[S_{t+1} = s^{\prime}|S_{t} = s, A_{t} = a]\]
+
+\[\mathcal{R}_{s}^{a} = \mathbb{E}[R_{t+1}|S_{t} = s, A_{t} = a]\]
+
+
+***** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/rl_agent_category.png][Agent Category]]
+Value Based: No policy, only value function.
+Policy Based: No value function, only policy.
+Actor Critic: Policy and value function.
+Model Free: Policy and/or value function. No model.
+Model Based: Policy and/or value function, model.
+
+
+** Glossary
+[[Https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%88%BE%E6%9B%BC%E6%96%B9%E7%A8%8B][Bellman Equation]] 贝尔曼方程
+Bellman optimality equation:
+\[
+V^{*}(s) = \max_{a}\{R(s, a) + r\sum_{s^{\prime}}P(s^{\prime}|s, a)V^{*}(s^{\prime})\}
+\]
+
+
+\[\]
