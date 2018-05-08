@@ -16,17 +16,17 @@ deterministic policy: π(s): S -> A
 *** [[http://rll.berkeley.edu/deeprlcourse/][cs 294]]
 
 *** [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files][ucl]]
-**** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/about_rl.png][About RL]]
+**** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/about_rl.png][About RL]] [[https://www.youtube.com/watch?v=2pWv7GOvuf0][lecture 1]] [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/intro_RL.pdf][slides]]
 Big different from other machine learning paradigms:
 1. No supervisor, only reward signal
 2. Delayed feedback
 3. Time sequential matters
 4. Agent's actions affect the subsequent data it receives
 
-**** Reward
+***** Reward
 Goal: select actions to maximise total future reward.
 
-**** Environment
+***** Environment
 Agent:
 Executes action \[A_{t}\]
 Receives observation \[Q_{t}\]
@@ -41,7 +41,7 @@ History:
 The sequence of observation, actions, rewards
 \[H_{t} = Q_{1},R_{1},A_{1},...,A_{t-1},Q_{t},R_{t}\]
 
-**** State:
+***** State:
 The information used to determine what happens next.
 \[S_{t} = f(H_{t})\]
 Environment state \[S^{e}_{t}\] is the environment's private representation. Environment uses to pick the next observation/reward. Which is not usually visible to the agent. Even if \[S_{t}^{e}\] is visible, it may contain irrelevant information.
@@ -52,7 +52,7 @@ Full observable: agent directly observes environment state \[O_{t} = S_{t}^{a} =
 
 Partially observable: agent indirectly observes environment state. \[S_{t}^{a} != S_{t}^,{e}\], it's partially observable Markov decision process (POMDP).
 
-**** RL Agent:
+***** RL Agent:
 An RL agent may include one or more of below components:
 ***** Policy: agent's behaviour function.
 A map form state to action.
@@ -74,8 +74,30 @@ Prediction of the environment next state(P)/immediate reward(R).
 Value Based: No policy, only value function.
 Policy Based: No value function, only policy.
 Actor Critic: Policy and value function.
-Model Free: Policy and/or value function. No model.
-Model Based: Policy and/or value function, model.
+Model Free: Policy and/or value function, no model.
+Model Based: Policy and/or value function, with model.
+
+**** MDP [[https://www.youtube.com/watch?v=lfHX2hHRMVQ][lecture 2]] [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/MDP.pdf][slides]]
+MDP formally describe an environment for RL.
+
+**** State Transition Matrix
+s -> current state, \[s^{\prime}\] -> successor state, \[\mathcal{P}\] -> transition matrix.
+State transition probability: \[\mathcal{P}_{ss^{\prime}} = \mathbb{P}[S_{t+1} = s^{\prime} | S_{t} = s]\]
+[[https://blog.csdn.net/bendanban/article/details/44221279][draw matrix]]
+\[\mathcal{P} =  
+\begin{matrix}
+\mathcal{P}_{11} & \cdots & \mathcal{P}_{1n} \\
+\vdots &  & \vdots \\
+\mathcal{P}_{n1} & ... & \mathcal{P}_{nn}
+\end{matrix}
+\] The sum of each row is 1.
+
+A Markov process/chain is a memory-less random process, a tuple \[\langle \mathcal{S},\mathcal{P} \rangle\].
+\[\mathcal{S}\] is a finite set of states
+\[\mathcal{P}\] is state transition probability matrix.
+A Markov reward process is a Markov chain with values, a tuple \[\lange \matchal{S},\matchal{P},\matchal{R}, \gamma \rangle\].
+\[\matchal{R}\] is reward function, \[\matchal{R_{s}} = \mathbb{E}[R_{t+1}|S_{t}=s]\]
+\[\gamma\] is discount factor, \[\gamma in [0,1]\]
 
 
 ** Glossary
@@ -84,6 +106,3 @@ Bellman optimality equation:
 \[
 V^{*}(s) = \max_{a}\{R(s, a) + r\sum_{s^{\prime}}P(s^{\prime}|s, a)V^{*}(s^{\prime})\}
 \]
-
-
-\[\]
