@@ -80,7 +80,7 @@ Model Based: Policy and/or value function, with model.
 **** MDP [[https://www.youtube.com/watch?v=lfHX2hHRMVQ][lecture 2]] [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/MDP.pdf][slides]]
 MDP formally describe an environment for RL.
 
-**** State Transition Matrix
+***** State Transition Matrix
 s -> current state, \[s^{\prime}\] -> successor state, \[\mathcal{P}\] -> transition matrix.
 State transition probability: \[\mathcal{P}_{ss^{\prime}} = \mathbb{P}[S_{t+1} = s^{\prime} | S_{t} = s]\]
 [[https://blog.csdn.net/bendanban/article/details/44221279][draw matrix]]
@@ -92,17 +92,131 @@ State transition probability: \[\mathcal{P}_{ss^{\prime}} = \mathbb{P}[S_{t+1} =
 \end{matrix}
 \] The sum of each row is 1.
 
-A Markov process/chain is a memory-less random process, a tuple \[\langle \mathcal{S},\mathcal{P} \rangle\].
+****** A Markov process/chain is a memory-less random process, a tuple \[\langle \mathcal{S},\mathcal{P} \rangle\].
 \[\mathcal{S}\] is a finite set of states
 \[\mathcal{P}\] is state transition probability matrix.
-A Markov reward process is a Markov chain with values, a tuple \[\lange \matchal{S},\matchal{P},\matchal{R}, \gamma \rangle\].
-\[\matchal{R}\] is reward function, \[\matchal{R_{s}} = \mathbb{E}[R_{t+1}|S_{t}=s]\]
-\[\gamma\] is discount factor, \[\gamma in [0,1]\]
+
+****** A Markov reward process is a Markov chain with values, a tuple \[\langle \mathcal{S},\mathcal{P},\mathcal{R}, \gamma \rangle\].
+\[\mathcal{R}\] is reward function, \[\mathcal{R}_{s} = \mathbb{E}[R_{t+1}|S_{t}=s]\]
+\[\gamma\] is discount factor, \[\gamma \in [0,1]\]
+\[G_{t}\] is the total discounted reward from time-step t: \[G_{t} = R_{t+1} + \gamma R_{t+2} + ... = \sum_{k=0}^{\infty
+} \gamma^{k}R_{t+k+1}\]
+
+****** A Markov decision process is a Markov reward process with decisions, a tuple \[\langle \mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma \rangle\].
+\[\mathcal{A}\] is a finite set of actions
+\[\mathcal{P}_{ss^{\prime}}^{a} = \mathbb{P}[S_{t+1}=s^{\prime}|S_{t}=s, A_{t}=a ]\]
+\[R_{s}^{a}=\mathbb{E}[R_{t+1}|S_{t}=s, A_{t}=a]\]
 
 
+***** Value Function
+The value function v(s) an MDP is the _expected_ return starting from state s.
+\[v(s) = \mathbb{E}[G_{t}|S_{t}=s]\]
+
+The state-value function \[v_{\pi}(s)\] of an MDP is _expected_ return starting form state s, following policy \[\pi\].
+\[v_{\pi}(s)=\mathbb{E}_{\pi}[G_{t}|S_{t}=s]\]
+
+The action-value function \[q_{\pi}(s,a)\] is the _expected_ return starting from state s, taking action a, following policy \[\pi\].
+\[q_{\pi}(s,a)=\mathbb{E}_{\pi}[G_{t}|S_{t}=s,A_{t}=a]\]
+
+***** Bellman Equation for MRP
+\[R_{t+1}\] -> immediate reward
+\[\gamma v(S_{t+1})\] -> discounted value of successor state
+
+****** Value function
+Value function decompose:
+\[
+\begin{aligned}
+v(s) &= \mathbb{E}[G_{t}|S_{t}=s] \\
+&= \mathbb{E}[R_{t+1} + \gamma R_{t+2} + \gamma^{2}R_{t+3} + ... | S_{t} = s] \\
+&= \mathbb{E}[R_{t+1} + \gamma(R_{t+2} + \gamma R_{t+3} + ...) | S_{t} = s] \\
+&= \mathbb{E}[R_{t+1} + \gamma(G_{t+1}) | S_{t} = s] \\
+&= \mathbb{E}[R_{t+1} + \gamma v(S_{t+1}) | S_{t} = s] \\
+&= \mathcal{R}_{s} + \gamma \sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}v(s^{\prime})
+\end{aligned}
+\]
+State-value function decompose:
+\[v_{\pi}(s)=\mathbb{E}_{\pi}[R_{t+1}+\gamma v_{\pi}(S_{t+1})|S_{t}=s]\]
+Action-value function decompose:
+\[q_{\pi}(s,a)=\mathbb{E}_{\pi}[R_{t+1}+\gamma q_{\pi}(S_{t+1},A_{t+1})|S_{t}=s,A_{t}=a]\]
+
+Derivation：
+\[
+\begin{aligned}
+v_{\pi}(s) &=\sum_{a \in A}\pi(a|s)q_{\pi}(s,a) \\
+q_{\pi}(s,a) &=\mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S} \mathcal{P}_{ss^{\prime}}^{a}v_{\pi}(s^{\prime}) \\
+v_{\pi}(s) &=\sum_{a \in A}\pi(a|s)(\mathcal{R}_{s}^{a}+\gamma\sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}^{a}v_{\pi}(s^{\prime}))
+\end{aligned}
+\]
+
+
+Bllman equation is a linear equation.
+
+\[
+\left[
+\begin{array}{c}
+v(1) \\
+\vdots \\
+v(n)
+\end{array}
+\right] = 
+\left[
+\begin{array}{c}
+\mathcal{R}_{1} \\
+\vdots \\
+\mathcal{R}_{n}
+\end{array} \right]
++ \gamma \left[
+\begin{matrix}
+\mathcal{P}_{11} & \cdots & \mathcal{P}_{1n} \\
+\vdots &  & \vdots \\
+\mathcal{P}_{n1} & ... & \mathcal{P}_{nn}
+\end{matrix}
+\right]
+\left[
+\begin{array}{c}
+v(1) \\
+\vdots \\
+v(n)
+\end{array}
+\right]
+\]
+
+\[
+\begin{aligned}
+v &= \mathcal{R} + \gamma\mathcal{P}v \\
+(1 - \gamma \mathcal{P})v &= \mathcal{R} \\
+v &= (1 - \gamma \mathcal{P})^{-1}\mathcal{R}
+\end{aligned}
+\]
+
+Computational complexity is \[\mathcal{O}(n^{3})\] for n states. 
+
+****** TODO Questions: why not \[\mathcal{O}(n^{2})\] in CPU?
+for i:(1, n):
+ v(i) = 0;
+ for j:(1, n):
+   v(i) += \[R_{j}\] * \[P^{\prime -1}_{ij}\]
+Answer: We need get the inverse matrix, which need get determinant firstly.
+So the questions change to "What's computational complexity of the determinant?"
+
+
+***** Policies
+\[\pi(a|s) = \mathbb{P}[A_{t}=a|S_{t}=s]\]
+A policy \[\pi \] is a distribution over action given states, fully defines the _behaviour_ of an agent.
+MDP policies only depend on the _current state_ not the history.
+Policies are time-independent(stationary), \[A_{t} \sim \pi(.|S_{t}), \for all t > 0\]
+MDP -> \[\mathcal{M}=\langle \mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma \rangle\], policy -> \[\pi\]
+State sequence \[S_{1},S_{2},...\] is a Markov process \[\langle \mathcal{S},\mathcal{P}^{\pi} \rangle\]
+State and reward sequence \[S_{1},R_{2},S_{2},...\] is a Markov reward process \[\langle \mathcal{S},\mathcal{P}^{\pi},\mathcal{R}^{\pi},\gamma \rangle\]
+\[\mathcal{P}_{s,s_{\prime}}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{P}_{ss^{\prime}}^{a}\]
+\[\mathcal{R}_{s}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{R}_{s}^{a}\]
+ 
 ** Glossary
 [[Https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%88%BE%E6%9B%BC%E6%96%B9%E7%A8%8B][Bellman Equation]] 贝尔曼方程
 Bellman optimality equation:
 \[
 V^{*}(s) = \max_{a}\{R(s, a) + r\sum_{s^{\prime}}P(s^{\prime}|s, a)V^{*}(s^{\prime})\}
 \]
+*** TODO [[https://zh.wikipedia.org/wiki/%E8%A1%8C%E5%88%97%E5%BC%8F][Determinant]] 行列式
+[[https://zh.wikipedia.org/wiki/%E9%80%86%E7%9F%A9%E9%98%B5][Inverse matrix]] 逆矩阵
+*** TODO [[https://zh.wikipedia.org/wiki/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%A0%91%E6%90%9C%E7%B4%A2][Monte Carlo tree search]] 蒙特卡罗树搜索 basic idea
