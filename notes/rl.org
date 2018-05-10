@@ -124,6 +124,7 @@ The action-value function \[q_{\pi}(s,a)\] is the _expected_ return starting fro
 
 ****** Value function
 Value function decompose:
+
 \[
 \begin{aligned}
 v(s) &= \mathbb{E}[G_{t}|S_{t}=s] \\
@@ -134,22 +135,39 @@ v(s) &= \mathbb{E}[G_{t}|S_{t}=s] \\
 &= \mathcal{R}_{s} + \gamma \sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}v(s^{\prime})
 \end{aligned}
 \]
+
 State-value function decompose:
 \[v_{\pi}(s)=\mathbb{E}_{\pi}[R_{t+1}+\gamma v_{\pi}(S_{t+1})|S_{t}=s]\]
+Optimal state-value function \[v_{*}(s)\] is the maximum state-value function over all policies:
+\[v_{*}(s)=\max_{\pi}v_{\pi}(s)\]
+_(It's the best possible performance in the MDP, when we know the optimal value function, MDP is *solved.*)_
+
 Action-value function decompose:
 \[q_{\pi}(s,a)=\mathbb{E}_{\pi}[R_{t+1}+\gamma q_{\pi}(S_{t+1},A_{t+1})|S_{t}=s,A_{t}=a]\]
+Optimal action-value function \[q_{*}(s,a)\] is the maximum action-value function over all policies:
+\[q_{*}(s,a)=\max_{\pi}q_{\pi}(s,a)\]
 
 Derivation：
 \[
 \begin{aligned}
 v_{\pi}(s) &=\sum_{a \in A}\pi(a|s)q_{\pi}(s,a) \\
 q_{\pi}(s,a) &=\mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S} \mathcal{P}_{ss^{\prime}}^{a}v_{\pi}(s^{\prime}) \\
+&=\mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S} \mathcal{P}_{ss^{\prime}}^{a}\sum_{a^{\prime} \in A}\pi(a^{\prime}|s^{\prime})q_{\pi}(s^{\prime},a^{\prime}) \\
 v_{\pi}(s) &=\sum_{a \in A}\pi(a|s)(\mathcal{R}_{s}^{a}+\gamma\sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}^{a}v_{\pi}(s^{\prime}))
 \end{aligned}
 \]
 
+Optimal Derivation(non-linear):
+\[
+\begin{aligned}
+v_{*}(s) &= \max_{a}q_{*}(s,a) \\
+q_{*}(s,a) &= \mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}^{a}v_{*}(s^{\prime}) \\
+&= \mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}^{a}\max_{a^{\prime}}q_{*}(s,a^{\prime}) \\
+v_{*}(s) &= \max_{a}\mathcal{R}_{s}^{a} + \gamma\sum_{s^{\prime} \in S}\mathcal{P}_{ss^{\prime}}^{a}v_{*}(s^{\prime}) \\
+\end{aligned}
+\]
 
-Bllman equation is a linear equation.
+Bllman equation: linear equation.
 
 \[
 \left[
@@ -189,6 +207,16 @@ v &= (1 - \gamma \mathcal{P})^{-1}\mathcal{R}
 \end{aligned}
 \]
 
+
+Bellman expectation equation:
+\[
+\begin{aligned}
+v_{\pi} &= \mathcal{R^{\pi}} + \gamma\mathcal{P}^{\pi}v_{\pi} \\
+(1 - \gamma \mathcal{P}^{\pi})v_{\pi} &= \mathcal{R}^{\pi} \\
+v_{\pi} &= (1 - \gamma \mathcal{P}^{\pi})^{-1}\mathcal{R}^{\pi}
+\end{aligned}
+\]
+
 Computational complexity is \[\mathcal{O}(n^{3})\] for n states. 
 
 ****** TODO Questions: why not \[\mathcal{O}(n^{2})\] in CPU?
@@ -202,6 +230,23 @@ So the questions change to "What's computational complexity of the determinant?"
 
 ***** Policies
 \[\pi(a|s) = \mathbb{P}[A_{t}=a|S_{t}=s]\]
+\[\pi \geq \pi^{\prime}  if v_{\pi}(s) \geq  v_{\pi^{\prime}}(s), \forall s\] 
+Optimal policy -> \[\pi_{*} \geq \pi, \forall \pi\]
+
+Optimal policy achieve optimal value function: 
+\[v_{\pi_{*}}(s)=v_{*}(s)\]
+
+Optimal policy achieve optimal action-value function: 
+\[q_{\pi_{*}} (s,a) = q_{*}(s,a)\]
+
+\[
+\pi_{*}(a|s)=
+\begin{cases}
+1,  & if \ a=\mathop{\arg\max}_{a\in A} \ q_{*}(s,a) \\
+0,  & otherwise
+\end{cases}
+\]
+
 A policy \[\pi \] is a distribution over action given states, fully defines the _behaviour_ of an agent.
 MDP policies only depend on the _current state_ not the history.
 Policies are time-independent(stationary), \[A_{t} \sim \pi(.|S_{t}), \for all t > 0\]
@@ -210,13 +255,19 @@ State sequence \[S_{1},S_{2},...\] is a Markov process \[\langle \mathcal{S},\ma
 State and reward sequence \[S_{1},R_{2},S_{2},...\] is a Markov reward process \[\langle \mathcal{S},\mathcal{P}^{\pi},\mathcal{R}^{\pi},\gamma \rangle\]
 \[\mathcal{P}_{s,s_{\prime}}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{P}_{ss^{\prime}}^{a}\]
 \[\mathcal{R}_{s}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{R}_{s}^{a}\]
- 
+
+
 ** Glossary
-[[Https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%88%BE%E6%9B%BC%E6%96%B9%E7%A8%8B][Bellman Equation]] 贝尔曼方程
+*** [[Https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%88%BE%E6%9B%BC%E6%96%B9%E7%A8%8B][Bellman Equation]] 贝尔曼方程
 Bellman optimality equation:
 \[
 V^{*}(s) = \max_{a}\{R(s, a) + r\sum_{s^{\prime}}P(s^{\prime}|s, a)V^{*}(s^{\prime})\}
 \]
+*** [[https://zhuanlan.zhihu.com/p/24860793][Sarsa]]
+*** POMDPs -> Partially observable Markov decision process with hidden states. \[\langle \mathcal{S},\mathcal{A},\mathcal{O},\mathcal{P},\mathcal{R},\mathcal{Z},\gamma \rangle\]
+\[\mathcal{O}\] is a finite set of observations.
+\[\mathcal{Z}\] is an observation function, \[\mathcal{Z}_{s^{\prime}o}^{a}=\mathbb{P}[O_{t+1}=o|S_{t+1}=s^{\prime},A_{t}=a]\].
+
 *** TODO [[https://zh.wikipedia.org/wiki/%E8%A1%8C%E5%88%97%E5%BC%8F][Determinant]] 行列式
-[[https://zh.wikipedia.org/wiki/%E9%80%86%E7%9F%A9%E9%98%B5][Inverse matrix]] 逆矩阵
+    [[https://zh.wikipedia.org/wiki/%E9%80%86%E7%9F%A9%E9%98%B5][Inverse matrix]] 逆矩阵
 *** TODO [[https://zh.wikipedia.org/wiki/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E6%A0%91%E6%90%9C%E7%B4%A2][Monte Carlo tree search]] 蒙特卡罗树搜索 basic idea
