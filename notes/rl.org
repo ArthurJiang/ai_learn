@@ -16,13 +16,12 @@ deterministic policy: π(s): S -> A
 *** [[http://rll.berkeley.edu/deeprlcourse/][cs 294]]
 
 *** [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files][ucl]]
-**** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/about_rl.png][About RL]] [[https://www.youtube.com/watch?v=2pWv7GOvuf0][lecture 1]] [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/intro_RL.pdf][slides]]
+**** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/about_rl.png][About RL]] [[https://www.youtube.com/watch?v=2pWv7GOvuf0][lecture 1]] [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/slides/RL_David_Sliver/intro_RL.pdf][slides]]
 Big different from other machine learning paradigms:
 1. No supervisor, only reward signal
 2. Delayed feedback
 3. Time sequential matters
 4. Agent's actions affect the subsequent data it receives
-
 ***** Reward
 Goal: select actions to maximise total future reward.
 
@@ -69,7 +68,6 @@ Prediction of the environment next state(P)/immediate reward(R).
 
 \[\mathcal{R}_{s}^{a} = \mathbb{E}[R_{t+1}|S_{t} = s, A_{t} = a]\]
 
-
 ***** [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/rl_agent_category.png][Agent Category]]
 Value Based: No policy, only value function.
 Policy Based: No value function, only policy.
@@ -77,9 +75,8 @@ Actor Critic: Policy and value function.
 Model Free: Policy and/or value function, no model.
 Model Based: Policy and/or value function, with model.
 
-**** MDP [[https://www.youtube.com/watch?v=lfHX2hHRMVQ][lecture 2]] [[http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/MDP.pdf][slides]]
+**** MDP [[https://www.youtube.com/watch?v=lfHX2hHRMVQ][lecture 2]] [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/slides/RL_David_Sliver/MDP.pdf][slides]]
 MDP formally describe an environment for RL.
-
 ***** State Transition Matrix
 s -> current state, \[s^{\prime}\] -> successor state, \[\mathcal{P}\] -> transition matrix.
 State transition probability: \[\mathcal{P}_{ss^{\prime}} = \mathbb{P}[S_{t+1} = s^{\prime} | S_{t} = s]\]
@@ -106,7 +103,6 @@ State transition probability: \[\mathcal{P}_{ss^{\prime}} = \mathbb{P}[S_{t+1} =
 \[\mathcal{A}\] is a finite set of actions
 \[\mathcal{P}_{ss^{\prime}}^{a} = \mathbb{P}[S_{t+1}=s^{\prime}|S_{t}=s, A_{t}=a ]\]
 \[R_{s}^{a}=\mathbb{E}[R_{t+1}|S_{t}=s, A_{t}=a]\]
-
 
 ***** Value Function
 The value function v(s) an MDP is the _expected_ return starting from state s.
@@ -227,7 +223,6 @@ for i:(1, n):
 Answer: We need get the inverse matrix, which need get determinant firstly.
 So the questions change to "What's computational complexity of the determinant?"
 
-
 ***** Policies
 \[\pi(a|s) = \mathbb{P}[A_{t}=a|S_{t}=s]\]
 \[\pi \geq \pi^{\prime}  if v_{\pi}(s) \geq  v_{\pi^{\prime}}(s), \forall s\] 
@@ -256,6 +251,33 @@ State and reward sequence \[S_{1},R_{2},S_{2},...\] is a Markov reward process \
 \[\mathcal{P}_{s,s_{\prime}}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{P}_{ss^{\prime}}^{a}\]
 \[\mathcal{R}_{s}^{\pi}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{R}_{s}^{a}\]
 
+*** DP [[https://www.youtube.com/watch?v=Nd1-UUMVfz4&list=PL7-jPKtc4r78-wCZcQn5IqyuWhBZ8fOxT&index=2][lecture 3]] [[https://financestore.blob.core.windows.net/public/arthur/learning/rl/slides/RL_David_Sliver/DP.pdf][slides]]
+Dynamic: sequential or temporal component to the problem.
+Programming: optimising a "program", i.e. a policy.
+**** Iterative Policy Evaluation
+Problem: evaluate a given policy \[\pi\].
+Solution: iterative application of Bellman expectation backup, \[v_{1} \rightarrow v_{2} \rightarrow ... \rightarrow v_{\pi}\].
+Synchronous backups: At each iteration k+1, for all states s, update \[v_{k+1}(s)\] from \[v_{k}(s^{\prime})\], \[s^{\prime}\] is a successor state of s.
+\[
+\begin{aligned}
+v_{k+1}(s)&=\sum_{a \in A}\pi(a|s)(\mathcal{R}_{s}^{a}+\gamma\sum_{ss^{\prime}}^{a}v_{k}(s^{\prime})) \\
+v^{k+1} &= \mathcal{R}^{\pi}+\gamma\mathcal{P}^{\pi}v^{k}
+\end{aligned}
+\]
+
+
+Evaluate policy \[\pi\]: \[v_{\pi}(s)=\mathbb{E}[R_{t+1}+\gamma R_{t+2} + ...|S_{t}=s]\].
+Improve by acting greedily whit respect to \[v_{\pi}\]: \[\pi^{\prime}=greedy(v_{\pi}), \ \ \pi^{{\prime}} \rightarrow \pi^{*}\]. 
+[[https://financestore.blob.core.windows.net/public/arthur/learning/rl/policy_interation.png][policy interaction]]
+\[
+\begin{aligned}
+v_{\pi}(s) &\leq q_{\pi}(s, \pi^{\prime}(s)) = \mathbb{E}_{\pi^{\prime}}[R_{t+1}+\gamma v_{\pi}(S_{t+1})|S_{t}=s] \\
+&\leq \mathbb{E}_{\pi^{\prime}}[R_{t+1}+\gamma q_{\pi}(S_{t+1}, \pi^{\prime}(S_{t+1}))|S_{t}=s] \\
+&\leq \mathbb{E}_{\pi^{\prime}}[R_{t+1}+\gamma R_{t+2} + \gamma^{2}q_{\pi}(S_{t+2},\pi^{\prime}(S_{t+2}))|S_{t}=s] \\
+&\leq \mathbb{E}_{\pi^{\prime}}[R_{t+1}+\gamma R_{t+2} + ...|S_{t}=s] = v_{\pi^{\prime}}(s)
+\end{aligned}
+\]
+ 
 
 ** Glossary
 *** [[Https://zh.wikipedia.org/wiki/%E8%B2%9D%E7%88%BE%E6%9B%BC%E6%96%B9%E7%A8%8B][Bellman Equation]] 贝尔曼方程
@@ -267,6 +289,13 @@ V^{*}(s) = \max_{a}\{R(s, a) + r\sum_{s^{\prime}}P(s^{\prime}|s, a)V^{*}(s^{\pri
 *** POMDPs -> Partially observable Markov decision process with hidden states. \[\langle \mathcal{S},\mathcal{A},\mathcal{O},\mathcal{P},\mathcal{R},\mathcal{Z},\gamma \rangle\]
 \[\mathcal{O}\] is a finite set of observations.
 \[\mathcal{Z}\] is an observation function, \[\mathcal{Z}_{s^{\prime}o}^{a}=\mathbb{P}[O_{t+1}=o|S_{t+1}=s^{\prime},A_{t}=a]\].
+\[H_{t}=A_{0},O_{1},R_{1},...,A_{t-1},O_{t},R_{t}\]
+**** Belief state b(h) is probability distribution over states, conditioned on the history h:
+\[b(h)=(\mathbb{P}[S_{t}=s^{1}|H_{t}=h] \ , \ ... \ , \ \mathbb{P}[S_{t}=s^{n}|H_{t}=h])\]
+*** Ergodic Markov Process
+Recurrent: each state is visited an infinite number of times
+Aperiodic: each state is visited without any systematic period
+
 
 *** TODO [[https://zh.wikipedia.org/wiki/%E8%A1%8C%E5%88%97%E5%BC%8F][Determinant]] 行列式
     [[https://zh.wikipedia.org/wiki/%E9%80%86%E7%9F%A9%E9%98%B5][Inverse matrix]] 逆矩阵
