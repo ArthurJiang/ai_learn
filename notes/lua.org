@@ -1,0 +1,149 @@
+* Basic Data Type
+** Function type
+#+BEGIN_SRC lua :results output
+  print(type("hello world"))
+  print(type(print))
+  print(type(true))
+  print(type(360.0))
+  print(type(nil))
+#+END_SRC
+
+#+RESULTS:
+: string
+: function
+: boolean
+: number
+: nil
+
+** nil
+#+BEGIN_SRC lua :results output
+  local num
+  print(num)
+
+  num = 100
+  print(num)
+#+END_SRC
+
+#+RESULTS:
+: nil
+: 100
+
+** boolean
+Only false and nil is "false", others is "true".
+#+BEGIN_SRC lua :results output
+  local a = true
+  local b = 0
+  local c = nil
+  if a then
+     print('a')
+  else
+     print('not a')
+  end
+
+  if b then
+     print('b')
+  else
+     print('not b')
+  end
+
+  if c then
+     print('c')
+  else
+     print('not c')
+  end
+#+END_SRC
+
+#+RESULTS:
+: a
+: b
+: not c
+
+** number
+LuaJIT support "dual-number", based on the context, use int for integer number, or use double for float number.
+Also support long long int.
+
+#+BEGIN_SRC lua :results output
+  local pi = 3.1415
+  print(math.floor(pi))
+  print(math.ceil(pi))
+#+END_SRC
+
+#+RESULTS:
+: 3
+: 4
+
+** string
+' ', " ", [[]], [=[]=], [==[]==], is read only. Lua string has a "intern" process, very same string only has one copy.
+The string is stored in a global hash table:
+- save memory
+- string compare is O(1)
+
+
+#+BEGIN_SRC lua :results output
+  local l0 = [[level 0]]
+  local l4 = [====[level 4]====]
+  print(l0)
+  print(l4)
+#+END_SRC
+
+#+RESULTS:
+: level 0
+: level 4
+
+
+** table
+Table is associated array, the key can be any type except "nil".
+Table also is a hash table, a array, or hybrid.
+#+BEGIN_SRC lua :results output
+  local person = {
+     id = "1235",
+     phone = "123345678",
+     friends = {12, 14, 15},
+     123,
+     124,
+     [11] = 123345678,
+     ['city'] = 'BJ'
+  }
+
+  print(person.id)
+  print(person["phone"])
+  print(person[1])
+  print(person["city"])
+  print(person[11])
+  print(person.friends[1])
+#+END_SRC
+
+#+RESULTS:
+: 1235
+: 123345678
+: 123
+: BJ
+: 123345678
+: 12
+
+** function
+In lua function is also a data type. Can be a return value or parameter.
+
+#+BEGIN_SRC lua :results output
+  local function foo()
+     print('in function foo')
+     local x = 1
+     local y =2
+     return x + y
+  end
+
+  print(foo())
+
+  local test = function ()
+     print("I'm test.")
+  end
+
+  print(test())
+#+END_SRC
+
+#+RESULTS:
+: in function foo
+: 3
+: I'm test.
+: 
+
