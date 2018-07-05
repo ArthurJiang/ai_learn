@@ -306,10 +306,16 @@ Paper: https://arxiv.org/pdf/1606.01540.pdf
               break
 #+END_SRC
 
+**** Basic
+not interface for agent, three interface for Env: 
+- reset(self): rest env state, return observation
+- step(self, action): one tick step, return observation, reward, done, info
+- render(self, mode='human', close=False): render one frame of env, default is human friendly pop up window, close for close this window
+**** Environments
+- Algorithmic
 
-
-
-
+- Atari
+- Box2d
 
 
 ** Glossary
