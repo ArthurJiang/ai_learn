@@ -313,7 +313,6 @@ not interface for agent, three interface for Env:
 - render(self, mode='human', close=False): render one frame of env, default is human friendly pop up window, close for close this window
 **** Environments
 - Algorithmic
-
 - Atari
 - Box2d
 
