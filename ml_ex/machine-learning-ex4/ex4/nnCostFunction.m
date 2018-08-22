@@ -64,47 +64,23 @@ Theta2_grad = zeros(size(Theta2));
 
 
 X = [ones(m, 1) X];
-h = sigmoid(Theta2 * [ones(m, 1), sigmoid(Theta1 * X')']')';
+y = eye(num_labels)(:,y)';
+z_2 = X * Theta1';
+a_2 = [ones(m,1), sigmoid(z_2)];
+z_3 = a_2 * Theta2';
+a_3 = sigmoid(z_3);
 
-total = 0;
-for i = 1:m
-  tmp = zeros(1, num_labels);
-  tmp(y(i)) = 1;
-  total = total + sum((-tmp) .* log(h(i, :)) - (1 - tmp) .* log(1 - h(i, :)));
-endfor
-
-no_bias_theta1 = Theta1(:, 2 : end);
-no_bias_theta2 = Theta2(:, 2 : end);
-J = 1/m * total + lambda/(2*m) * (sum(sum(no_bias_theta1 .^ 2)) + sum(sum(no_bias_theta2 .^ 2)));
+J = 1/m * sum(sum(-y .* log(a_3) - (1 - y) .* log(1 - a_3), 2)) + lambda/(2*m) * (sum(sum(Theta1(:, 2 : end) .^ 2)) + sum(sum(Theta2(:, 2 : end) .^ 2)));
 
 % -------------------------------------------------------------
 
 % =========================================================================
+delta_3 = a_3 - y;
+delta_2 = Theta2(:, 2:end)' * delta_3' .* sigmoidGradient(z_2)';
+Theta1_grad = 1/m * (delta_2 * X);
+Theta2_grad = 1/m * (delta_3' * a_2);
 
 % Unroll gradients
-z_2 = X * Theta1';
-size(z_2)
-a_2 = sigmoid([ones(m, 1), z_2]);
-z_3 = a_2 * Theta2';
-a_3 = sigmoid(z_3);
-
-for i = 1:m
-  tmp = zeros(1, num_labels);
-  tmp(y(i)) = 1;
-  delta_3 = h(i, :) - tmp;
-  % size(Theta2'(2:end, :))
-  % size(delta_3')
-  % size(z_2(i, :))
-  delta_2 = Theta2'(2:end, :) * delta_3' .* sigmoidGradient(z_2(i, :))';
-  Theta2_grad = Theta2_grad + delta_3' * a_2(i, :);
-  Theta1_grad = Theta1_grad + delta_2 * X(i, :);
-endfor
-Theta1_grad = 1/m .* Theta1_grad;
-Theta2_grad = 1/m .* Theta2_grad;
-% size(Theta1_grad)
-% size(Theta2_grad)
-% size(t_delta_1)
-% size(t_delta_2)
 grad = [Theta1_grad(:); Theta2_grad(:)];
 
 
