@@ -77,8 +77,10 @@ J = 1/m * sum(sum(-y .* log(a_3) - (1 - y) .* log(1 - a_3), 2)) + lambda/(2*m) *
 % =========================================================================
 delta_3 = a_3 - y;
 delta_2 = Theta2(:, 2:end)' * delta_3' .* sigmoidGradient(z_2)';
-Theta1_grad = 1/m * (delta_2 * X);
-Theta2_grad = 1/m * (delta_3' * a_2);
+Theta1_grad = 1/m * (delta_2 * X) + lambda/m * Theta1;
+Theta1_grad(:, 1) = Theta1_grad(:, 1) - lambda/m * Theta1(:, 1);
+Theta2_grad = 1/m * (delta_3' * a_2) + lambda/m * Theta2;
+Theta2_grad(:, 1) = Theta2_grad(:, 1) - lambda/m * Theta2(:, 1);
 
 % Unroll gradients
 grad = [Theta1_grad(:); Theta2_grad(:)];
